@@ -10,10 +10,9 @@
 
 #define BUFFER_SIZE 256
 
-void regular_file_logic(char file_path[])
+void regular_file_logic(char file_path[], struct stat file_stat)
 {
 
-    struct stat file_stat;
     char options[3];
 
     printf("Select an option: ");
@@ -46,17 +45,14 @@ void regular_file_logic(char file_path[])
 
     if (strstr(options, "-l"))
     {
-        printf("Enter symlink name: ");
+        printf("\nEnter symlink name: ");
         char symlink_name[BUFFER_SIZE];
-        fgets(symlink_name, BUFFER_SIZE, stdin);
+        scanf("%s", symlink_name);
 
-        char resolved_path[BUFFER_SIZE];
-        if (readlink(symlink_name, resolved_path, BUFFER_SIZE) == -1)
-        {
-            printf("Error reading symlink: %s\n", strerror(errno));
-            return;
+        if(symlink(file_path, symlink_name)==-1){
+            perror("symlink");
         }
-
-        printf("Symlink points to: %s\n", resolved_path);
+        printf("Symlink points to: %s\n", file_path);
     }
+
 }

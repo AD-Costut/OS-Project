@@ -14,7 +14,7 @@ void symbolic_link_logic(char symlink_path[]) {
     struct stat symlink_stat;
     char options[3];
 
-    printf("Select an option:\n");
+    printf("Select an option: ");
     scanf("%s", options);
 
     if (strstr(options, "-n")) {

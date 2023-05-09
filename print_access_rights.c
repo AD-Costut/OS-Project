@@ -8,17 +8,23 @@
 #include <time.h>
 #include <dirent.h>
 
-void print_access_rights(struct stat file_stat)
+void print_access_rights(struct stat fileStat)
 {
-    printf("Access rights: ");
-    printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
-    printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
-    printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
-    printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
-    printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
-    printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
-    printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
-    printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
-    printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
-    printf((file_stat.st_mode & S_IXOTH) ? "x\n" : "-\n");
+    
+            printf("\nUser:\n");
+            printf("Read - %s\n", (fileStat.st_mode & S_IRUSR) ? "yes" : "no");
+            printf("Write - %s\n", (fileStat.st_mode & S_IWUSR) ? "yes" : "no");
+            printf("Exec - %s\n", (fileStat.st_mode & S_IXUSR) ? "yes" : "no");
+
+        
+            printf("\nGroup:\n");
+            printf("Read - %s\n", (fileStat.st_mode & S_IRGRP) ? "yes" : "no");
+            printf("Write - %s\n", (fileStat.st_mode & S_IWGRP) ? "yes" : "no");
+            printf("Exec - %s\n", (fileStat.st_mode & S_IXGRP) ? "yes" : "no");
+
+    
+            printf("\nOthers:\n");
+            printf("Read - %s\n", (fileStat.st_mode & S_IROTH) ? "yes" : "no");
+            printf("Write - %s\n", (fileStat.st_mode & S_IWOTH) ? "yes" : "no");
+            printf("Exec - %s\n", (fileStat.st_mode & S_IXOTH) ? "yes" : "no"); 
 }
