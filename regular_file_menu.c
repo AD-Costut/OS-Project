@@ -43,34 +43,22 @@ void regular_file_menu(char *file_path)
     if (options[length - 1] == '\n')
     {
         options[length - 1] = '\0';
-    }
-
-    if (strstr(options, "-n"))
+    } else if (strstr(options, "-n"))
     {
         printf("File name: %s\n", file_path);
-    }
-
-    if (strstr(options, "-d"))
+    }else if (strstr(options, "-d"))
     {
         printf("File size: %lld bytes\n", (long long)file_stat.st_size);
-    }
-
-    if (strstr(options, "-h"))
+    }else if (strstr(options, "-h"))
     {
         printf("Hard link count: %ld\n", (long)file_stat.st_nlink);
-    }
-
-    if (strstr(options, "-m"))
+    }else if (strstr(options, "-m"))
     {
         printf("Time of last modification: %s", ctime(&file_stat.st_mtime));
-    }
-
-    if (strstr(options, "-a"))
+    }else if (strstr(options, "-a"))
     {
         print_access_rights(file_stat);
-    }
-
-    if (strstr(options, "-l"))
+    }else if (strstr(options, "-l"))
     {
         printf("Enter symlink name: ");
         char symlink_name[BUFFER_SIZE];
@@ -84,6 +72,9 @@ void regular_file_menu(char *file_path)
         }
 
         printf("Symlink points to: %s\n", resolved_path);
+    } else {
+
+        regular_file_menu(file_path);
     }
 
     close(file_descriptor);
