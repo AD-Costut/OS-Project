@@ -16,25 +16,21 @@ void process_regular_file(char filename[])
     FILE* file;
     int line_number = 0;
 
-    // Check if the filename ends with the extension
     if (strcmp(filename + strlen(filename) - strlen(extension), extension) != 0) {
-        // Open the file for reading
         file = fopen(filename, "r");
         if (file == NULL) {
             printf("Failed to open file %s.\n", filename);
-            return 1;
         }
 
-        // Print the lines without the extension
         while (fgets(buffer, 256, file) != NULL) {
             line_number++;
-            printf("%s:%d: %s", filename, line_number, buffer);
+            //printf("%s:%d: %s", filename, line_number, buffer);
         }
+        printf("The number of lines is: %d",line_number);
 
-        // Close the file
         fclose(file);
     } else {
-        printf("%s is not a C file.\n", filename);
+        printf("%s is a C file.\n", filename);
     }
 
     printf("\n\n");

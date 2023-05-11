@@ -8,6 +8,10 @@
 #include <time.h>
 #include <dirent.h>
 
+#include "regular_file_logic.c"
+#include "dir_logic.c"
+#include "symbolic_link_logic.c"
+
 void files_menu(int argc, char *dir_path[])
 {
     struct stat file_stat;
@@ -35,7 +39,7 @@ void files_menu(int argc, char *dir_path[])
                 printf("%s is a symbolic link\n", dir_path[i]);
                 printf("\n------MENU------\n\n");
                 printf("name (-n)\ndelete symlink (-l)\nsize of symlink (-d)\nsize of target file (-t)\naccess rights (-a)\n");
-                symbolic_link_logic(dir_path[i]);
+                symbolic_link_logic(argc, dir_path[i]);
             }
         }
     }

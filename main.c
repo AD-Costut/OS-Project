@@ -8,12 +8,7 @@
 #include <time.h>
 #include <dirent.h>
 
-#include "print_access_rights.c"
-#include "regular_file_menu.c"
 #include "files_menu.c"
-#include "regular_file_logic.c"
-#include "dir_logic.c"
-#include "symbolic_link_logic.c"
 
 #define MAX_OPTIONS 100
 #define BUFFER_SIZE 256

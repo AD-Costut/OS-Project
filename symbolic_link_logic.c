@@ -8,55 +8,88 @@
 #include <time.h>
 #include <dirent.h>
 
-#define PATH_MAX 250
+int pid_options, pid_process_sym;
 
-void symbolic_link_logic(char symlink_path[]) {
+void symbolic_link_logic(int argc, char symlink_path[]) {
     struct stat symlink_stat;
     char options[3];
 
-    printf("Select an option: ");
+    printf("\nSelect an option: ");
     scanf("%s", options);
 
-    if (strstr(options, "-n")) {
-        printf("Symbolic link name: %s\n", symlink_path);
+    if (!strstr(options, "-n") && !strstr(options, "-l") && !strstr(options, "-d") && 
+    !strstr(options, "-t") && !strstr(options, "-a"))
+    {
+        printf("\n------MENU------\n\n");
+        printf("name (-n)\ndelete symlink (-l)\nsize of symlink (-d)\nsize of target file (-t)\naccess rights (-a)\n");
+        symbolic_link_logic(argc, symlink_path);
     }
+    else
+    {
+        if((pid_options=fork())==0)
+        {
+            if (strstr(options, "-n")) {
+                printf("Symbolic link name: %s\n", symlink_path);
+            }
+            else if (strstr(options, "-l")) {
+                if (unlink(symlink_path) == -1) {
+                    printf("Error deleting symbolic link: %s\n", strerror(errno));
+                    return;
+                }
 
-    if (strstr(options, "-l")) {
-        if (unlink(symlink_path) == -1) {
-            printf("Error deleting symbolic link: %s\n", strerror(errno));
-            return;
+                printf("Symbolic link deleted successfully\n");
+                return;
+            }
+            else if (stat(symlink_path, &symlink_stat) == -1) {
+                printf("Error: Unable to get symbolic link status\n");
+                return;
+            }
+            else if (strstr(options, "-d")) {
+                printf("Symbolic link size: %ld bytes\n", symlink_stat.st_size);
+            }
+            else if (strstr(options, "-t")) {
+                char resolved_path[250];
+                if (realpath(symlink_path, resolved_path) == NULL) {
+                    printf("Error: Unable to get resolved path\n");
+                    return;
+                }
+
+                struct stat target_stat;
+                if (stat(resolved_path, &target_stat) == -1) {
+                    printf("Error: Unable to get target file status\n");
+                    return;
+                }
+
+                printf("Target file size: %ld bytes\n", target_stat.st_size);
+            }
+            else if (strstr(options, "-a")) {
+                print_access_rights(symlink_stat);
+            }
+            exit(pid_options);
         }
 
-        printf("Symbolic link deleted successfully\n");
-        return;
-    }
-
-    if (stat(symlink_path, &symlink_stat) == -1) {
-        printf("Error: Unable to get symbolic link status\n");
-        return;
-    }
-
-    if (strstr(options, "-d")) {
-        printf("Symbolic link size: %ld bytes\n", symlink_stat.st_size);
-    }
-
-    if (strstr(options, "-t")) {
-        char resolved_path[PATH_MAX];
-        if (realpath(symlink_path, resolved_path) == NULL) {
-            printf("Error: Unable to get resolved path\n");
-            return;
+        if(pid_options>0)
+        {
+            char pid_str[10];
+            int status;
+            waitpid(pid_options, &status, 0);
+            printf("\nThe process child ended with PID: %d with exit code %d.\n\n", pid_options, WEXITSTATUS(status));
         }
 
-        struct stat target_stat;
-        if (stat(resolved_path, &target_stat) == -1) {
-            printf("Error: Unable to get target file status\n");
-            return;
-        }
+        // if((pid_process_sym=fork())==0)
+        // {
+        //     if (chmod("my_link", S_IRWXU | S_IRGRP | S_IWGRP | S_IRUSR | S_IWUSR) == -1) {
+        //         printf("Error changing permissions of the symbolic link\n");
+        // }
+        // exit(pid_process_sym);
+        // }
 
-        printf("Target file size: %ld bytes\n", target_stat.st_size);
-    }
-
-    if (strstr(options, "-a")) {
-        print_access_rights(symlink_stat);
+        // if(pid_process_sym>0)
+        // {
+        //     char pid_str[10];
+        //     int status;
+        //     waitpid(pid_process_sym, &status, 0);
+        //     printf("The process child ended with PID: %d with exit code %d.\n\n", pid_process_sym, WEXITSTATUS(status));
+        // }
     }
 }
