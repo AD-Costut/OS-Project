@@ -26,14 +26,15 @@ void process_regular_file(char filename[])
             line_number++;
             //printf("%s:%d: %s", filename, line_number, buffer);
         }
-        printf("The number of lines is: %d",line_number);
+        printf("\nThe number of lines is: %d\n",line_number);
 
         fclose(file);
-    } else {
-        printf("%s is a C file.\n", filename);
-    }
+    } 
+    // else {
+    //     printf("%s is a C file.\n", filename);
+    // }
 
-    printf("\n\n");
+    printf("\n");
 
 }
 

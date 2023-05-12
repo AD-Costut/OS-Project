@@ -15,7 +15,7 @@ void symbolic_link_logic(int argc, char symlink_path[]) {
     char options[3];
 
     printf("\nSelect an option: ");
-    scanf("%s", options);
+    scanf("%2s", options);
 
     if (!strstr(options, "-n") && !strstr(options, "-l") && !strstr(options, "-d") && 
     !strstr(options, "-t") && !strstr(options, "-a"))
@@ -29,7 +29,7 @@ void symbolic_link_logic(int argc, char symlink_path[]) {
         if((pid_options=fork())==0)
         {
             if (strstr(options, "-n")) {
-                printf("Symbolic link name: %s\n", symlink_path);
+                printf("\nSymbolic link name: %s\n", symlink_path);
             }
             else if (strstr(options, "-l")) {
                 if (unlink(symlink_path) == -1) {
@@ -37,7 +37,7 @@ void symbolic_link_logic(int argc, char symlink_path[]) {
                     return;
                 }
 
-                printf("Symbolic link deleted successfully\n");
+                printf("\nSymbolic link deleted successfully\n");
                 return;
             }
             else if (stat(symlink_path, &symlink_stat) == -1) {
@@ -45,7 +45,7 @@ void symbolic_link_logic(int argc, char symlink_path[]) {
                 return;
             }
             else if (strstr(options, "-d")) {
-                printf("Symbolic link size: %ld bytes\n", symlink_stat.st_size);
+                printf("\nSymbolic link size: %ld bytes\n", symlink_stat.st_size);
             }
             else if (strstr(options, "-t")) {
                 char resolved_path[250];
@@ -60,7 +60,7 @@ void symbolic_link_logic(int argc, char symlink_path[]) {
                     return;
                 }
 
-                printf("Target file size: %ld bytes\n", target_stat.st_size);
+                printf("\nTarget file size: %ld bytes\n", target_stat.st_size);
             }
             else if (strstr(options, "-a")) {
                 print_access_rights(symlink_stat);
@@ -70,26 +70,39 @@ void symbolic_link_logic(int argc, char symlink_path[]) {
 
         if(pid_options>0)
         {
-            char pid_str[10];
+            //char pid_str[10];
             int status;
             waitpid(pid_options, &status, 0);
-            printf("\nThe process child ended with PID: %d with exit code %d.\n\n", pid_options, WEXITSTATUS(status));
+            printf("\nThe process child ended with PID: %d with exit code %d.\n", pid_options, WEXITSTATUS(status));
         }
 
-        // if((pid_process_sym=fork())==0)
-        // {
-        //     if (chmod("my_link", S_IRWXU | S_IRGRP | S_IWGRP | S_IRUSR | S_IWUSR) == -1) {
-        //         printf("Error changing permissions of the symbolic link\n");
-        // }
-        // exit(pid_process_sym);
-        // }
+        if ((pid_process_sym = fork()) == 0)
+        {
+            struct stat symlink_stat;
+            if (stat(symlink_path, &symlink_stat) == -1)
+            {
+                printf("Error: Unable to get symbolic link status\n");
+                exit(1);
+            }
 
-        // if(pid_process_sym>0)
-        // {
-        //     char pid_str[10];
-        //     int status;
-        //     waitpid(pid_process_sym, &status, 0);
-        //     printf("The process child ended with PID: %d with exit code %d.\n\n", pid_process_sym, WEXITSTATUS(status));
-        // }
+            symlink_stat.st_mode |= S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP;
+            symlink_stat.st_mode &= ~(S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH);
+
+            if (chmod(symlink_path, symlink_stat.st_mode) == -1)
+            {
+                printf("Error changing permissions of the symbolic link\n");
+                exit(1);
+            }
+
+            exit(0);
+        }
+
+        if(pid_process_sym>0)
+        {
+            //char pid_str[10];
+            int status;
+            waitpid(pid_process_sym, &status, 0);
+            printf("\nThe process child ended with PID: %d with exit code %d.\n\n", pid_process_sym, WEXITSTATUS(status));
+        }
     }
 }

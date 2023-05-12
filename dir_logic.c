@@ -17,7 +17,7 @@ void dir_logic(char dir_path[])
     char options[3];
 
     printf("\nSelect an option: ");
-    scanf("%s", options);
+    scanf("%2s", options);
     
     if (!strstr(options, "-n") && !strstr(options, "-d") && !strstr(options, "-a") && !strstr(options, "-c"))
     {
@@ -32,7 +32,7 @@ void dir_logic(char dir_path[])
             {
                 if (strstr(options, "-n"))
                 {
-                    printf("Directory name: %s\n", dir_path);
+                    printf("\nDirectory name: %s\n", dir_path);
                 }
                 else if (strstr(options, "-d"))
                 {
@@ -42,7 +42,7 @@ void dir_logic(char dir_path[])
                         return;
                     }
 
-                    printf("Directory size: %ld bytes\n", dir_stat.st_size);
+                    printf("\nDirectory size: %ld bytes\n", dir_stat.st_size);
                 }
                 else if (strstr(options, "-a"))
                 {
@@ -75,7 +75,7 @@ void dir_logic(char dir_path[])
                     }
 
                     closedir(dir);
-                    printf("Total number of files with .c extension: %d\n", count);
+                    printf("\nTotal number of files with .c extension: %d\n", count);
                 }
 
                 exit(pid_options);
@@ -84,7 +84,7 @@ void dir_logic(char dir_path[])
 
             if(pid_options>0)
             {
-                char pid_str[10];
+                //char pid_str[10];
                 int status;
                 waitpid(pid_options, &status, 0);
                 printf("\nThe process child ended with PID: %d with exit code %d.\n\n", pid_options, WEXITSTATUS(status));
@@ -110,7 +110,7 @@ void dir_logic(char dir_path[])
 
             if(pid_process_dir>0)
             {
-                char pid_str[10];
+                //char pid_str[10];
                 int status;
                 waitpid(pid_process_dir, &status, 0);
                 printf("The process child ended with PID: %d with exit code %d.\n\n", pid_process_dir, WEXITSTATUS(status));

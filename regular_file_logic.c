@@ -11,6 +11,7 @@
 
 #include "process_regular_file.c"
 #include "print_access_rights.c"
+#include "score.c"
 
 #define BUFFER_SIZE 256
 
@@ -18,11 +19,11 @@ int pid_options, pid_process_file;
 
 void regular_file_logic(char file_path[], struct stat file_stat)
 {
-    char buffer[256] = "";
+    //char buffer[256] = "";
     char options[3];
 
     printf("\nSelect an option: ");
-    scanf("%s", options);
+    scanf("%2s", options);
      
     if (!strstr(options, "-n") && !strstr(options, "-d") && !strstr(options, "-h") && 
     !strstr(options, "-m") && !strstr(options, "-a") && !strstr(options, "-l"))
@@ -39,19 +40,19 @@ void regular_file_logic(char file_path[], struct stat file_stat)
 
             if (strstr(options, "-n"))
             {
-                printf("File name: %s\n", file_path);
+                printf("\nFile name: %s\n", file_path);
             }
             else if (strstr(options, "-d"))
             {
-                printf("File size: %ld bytes\n", file_stat.st_size);
+                printf("\nFile size: %ld bytes\n", file_stat.st_size);
             }
             else if (strstr(options, "-h"))
             {
-                printf("Hard link count: %ld\n", (long)file_stat.st_nlink);
+                printf("\nHard link count: %ld\n", (long)file_stat.st_nlink);
             }
             else if (strstr(options, "-m"))
             {
-                printf("Time of last modification: %s", ctime(&file_stat.st_mtime));
+                printf("\nTime of last modification: %s", ctime(&file_stat.st_mtime));
             }
             else if (strstr(options, "-a"))
             {
@@ -66,7 +67,7 @@ void regular_file_logic(char file_path[], struct stat file_stat)
                 if(symlink(file_path, symlink_name)==-1){
                     perror("symlink");
                 }
-                printf("Symlink points to: %s\n", file_path);
+                printf("\nSymlink points to: %s\n", file_path);
             }
 
             exit(pid_options);
@@ -75,21 +76,22 @@ void regular_file_logic(char file_path[], struct stat file_stat)
 
         if(pid_options>0)
         {
-            char pid_str[10];
+            //char pid_str[10];
             int status;
             waitpid(pid_options, &status, 0);
-            printf("\nThe process child ended with PID: %d with exit code %d.\n\n", pid_options, WEXITSTATUS(status));
+            printf("\nThe process child ended with PID: %d with exit code %d.\n", pid_options, WEXITSTATUS(status));
         }
 
         if((pid_process_file=fork())==0)
         {
             process_regular_file(file_path);
+            score(file_path);
             exit(pid_process_file);
         }
 
         if(pid_process_file>0)
         {
-            char pid_str[10];
+            //char pid_str[10];
             int status;
             waitpid(pid_process_file, &status, 0);
             printf("The process child ended with PID: %d with exit code %d.\n\n", pid_process_file, WEXITSTATUS(status));
