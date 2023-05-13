@@ -7,13 +7,10 @@ fi
 
 input_file=$1
 
-# Compile the C file and filter error and warning messages
 error_warnings=$(gcc -o /dev/null -Wall -Wextra $input_file 2>&1 | grep -E 'error|warning')
 
-# Extract the error and warning count
 error_count=$(echo "$error_warnings" | grep -c "error")
 warning_count=$(echo "$error_warnings" | grep -c "warning")
 
-# Output the error and warning count to a log file
 echo "$error_count" > info_errors_warnings.txt
 echo "$warning_count" >> info_errors_warnings.txt
