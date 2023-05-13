@@ -8,50 +8,71 @@
 #include <time.h>
 #include <dirent.h>
 
-
 void process_regular_file(char filename[])
 {
-    const char* extension = ".c";
+    const char *extension = ".c";
     char buffer[256];
-    FILE* file;
+    FILE *file;
     int line_number = 0;
 
-    if (strcmp(filename + strlen(filename) - strlen(extension), extension) != 0) {
+    if (strcmp(filename + strlen(filename) - strlen(extension), extension) != 0)
+    {
         file = fopen(filename, "r");
-        if (file == NULL) {
+        if (file == NULL)
+        {
             printf("Failed to open file %s.\n", filename);
         }
 
-        while (fgets(buffer, 256, file) != NULL) {
+        while (fgets(buffer, 256, file) != NULL)
+        {
             line_number++;
-            //printf("%s:%d: %s", filename, line_number, buffer);
+            // printf("%s:%d: %s", filename, line_number, buffer);
         }
-        printf("\nThe number of lines is: %d\n",line_number);
+        printf("\nThe number of lines is: %d\n", line_number);
 
         fclose(file);
-    } 
-    // else {
-    //     printf("%s is a C file.\n", filename);
-    // }
+    }
+    else
+    {
+        char buffer[50];
+        sprintf(buffer, "bash script.sh %s", filename);
+        system(buffer);
+
+        int first_val, second_val;
+        FILE *fp1 = fopen("info_errors_warnings.txt", "r");
+        if (fp1 == NULL)
+        {
+            printf("Error opening file\n");
+        }
+        fscanf(fp1, "%d %d", &first_val, &second_val);
+        fclose(fp1);
+
+        double score = 0.0;
+        if (first_val == 0 && second_val == 0)
+        {
+            score = 10;
+        }
+        else if (first_val > 0)
+        {
+            score = 1;
+        }
+        else if (second_val > 10)
+        {
+            score = 2;
+        }
+        else if (second_val <= 10)
+        {
+            score = 2 + (10 - second_val) * 0.8;
+        }
+
+        FILE *fp = fopen("grades.txt", "a");
+        if (fp == NULL)
+        {
+            perror("fopen");
+        }
+        fprintf(fp, "%s: %.2f\n", filename, score);
+        fclose(fp);
+    }
 
     printf("\n");
-
-}
-
-void write_to_file(char content[]) {
-    
-    int fd = open("grade.txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    if (fd == -1) {
-        printf("Failed to open file grade.txt.\n");
-        return;
-    }
-
-    ssize_t nwritten = write(fd, content, strlen(content));
-    if (nwritten == -1) {
-        printf("Failed to write to file grade.txt.\n");
-        close(fd);
-        return;
-    }
-
-    close(fd);
 }

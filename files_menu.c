@@ -18,29 +18,37 @@ void files_menu(int argc, char *dir_path[])
 
     for (int i = 1; i < argc; i++)
     {
-        if (lstat(dir_path[i], &file_stat) != -1) {
+        if (open(dir_path[i], O_RDONLY) > 0)
+        {
+            if (lstat(dir_path[i], &file_stat) != -1)
+            {
 
-            if (S_ISREG(file_stat.st_mode))
-            {
-                printf("%s is a regular file\n", dir_path[i]);
-                printf("\n------MENU------\n\n");
-                printf("name (-n)\nsize (-d)\nhard link count (-h)\ntime of last modification (-m)\naccess rights (-a)\ncreate symlink (-l)\n");
-                regular_file_logic(dir_path[i], file_stat);
+                if (S_ISREG(file_stat.st_mode))
+                {
+                    printf("%s is a regular file\n", dir_path[i]);
+                    printf("\n------MENU------\n\n");
+                    printf("name (-n)\nsize (-d)\nhard link count (-h)\ntime of last modification (-m)\naccess rights (-a)\ncreate symlink (-l)\n");
+                    regular_file_logic(dir_path[i], file_stat);
+                }
+                else if (S_ISDIR(file_stat.st_mode))
+                {
+                    printf("%s is a directory\n", dir_path[i]);
+                    printf("\n------MENU------\n\n");
+                    printf("name (-n)\nsize (-d)\nfiles with .c extension (-c)\naccess rights (-a)\n");
+                    dir_logic(dir_path[i]);
+                }
+                else if (S_ISLNK(file_stat.st_mode))
+                {
+                    printf("%s is a symbolic link\n", dir_path[i]);
+                    printf("\n------MENU------\n\n");
+                    printf("name (-n)\ndelete symlink (-l)\nsize of symlink (-d)\nsize of target file (-t)\naccess rights (-a)\n");
+                    symbolic_link_logic(argc, dir_path[i]);
+                }
             }
-            else if (S_ISDIR(file_stat.st_mode))
-            {
-                printf("%s is a directory\n", dir_path[i]);
-                printf("\n------MENU------\n\n");
-                printf("name (-n)\nsize (-d)\nfiles with .c extension (-c)\naccess rights (-a)\n");
-                dir_logic(dir_path[i]);
-            }
-            else if (S_ISLNK(file_stat.st_mode))
-            {
-                printf("%s is a symbolic link\n", dir_path[i]);
-                printf("\n------MENU------\n\n");
-                printf("name (-n)\ndelete symlink (-l)\nsize of symlink (-d)\nsize of target file (-t)\naccess rights (-a)\n");
-                symbolic_link_logic(argc, dir_path[i]);
-            }
+        }
+        else
+        {
+            printf("##### The file \"%s\" doesn't exist! #####\n\n", dir_path[i]);
         }
     }
 }

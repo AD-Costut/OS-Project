@@ -8,7 +8,6 @@
 #include <time.h>
 #include <dirent.h>
 
-
 int pid_options, pid_process_dir;
 
 void dir_logic(char dir_path[])
@@ -17,18 +16,20 @@ void dir_logic(char dir_path[])
     char options[3];
 
     printf("\nSelect an option: ");
-    scanf("%2s", options);
-    
-    if (!strstr(options, "-n") && !strstr(options, "-d") && !strstr(options, "-a") && !strstr(options, "-c"))
+    scanf("%s", options);
+
+    if (strlen(options) == 2)
     {
-     printf("\nInvalid option!\n");
-     printf("\n------MENU------\n\n");
-     printf("name (-n)\nsize (-d)\nfiles with .c extension (-c)\naccess rights (-a)\n");
-     dir_logic(dir_path);
-    }
+        if (!strstr(options, "-n") && !strstr(options, "-d") && !strstr(options, "-a") && !strstr(options, "-c"))
+        {
+            printf("\nInvalid option!\n");
+            printf("\n------MENU------\n\n");
+            printf("name (-n)\nsize (-d)\nfiles with .c extension (-c)\naccess rights (-a)\n");
+            dir_logic(dir_path);
+        }
         else
-        { 
-            if((pid_options=fork())==0)
+        {
+            if ((pid_options = fork()) == 0)
             {
                 if (strstr(options, "-n"))
                 {
@@ -81,22 +82,21 @@ void dir_logic(char dir_path[])
                 exit(pid_options);
             }
 
-
-            if(pid_options>0)
+            if (pid_options > 0)
             {
-                //char pid_str[10];
                 int status;
                 waitpid(pid_options, &status, 0);
                 printf("\nThe process child ended with PID: %d with exit code %d.\n\n", pid_options, WEXITSTATUS(status));
             }
 
-            if ((pid_process_dir=fork())==0)
+            if ((pid_process_dir = fork()) == 0)
             {
                 char file_name[250];
                 snprintf(file_name, 250, "%s/%s_file.txt", dir_path, dir_path);
 
-                FILE* fp = fopen(file_name, "w");
-                if (fp == NULL) {
+                FILE *fp = fopen(file_name, "w");
+                if (fp == NULL)
+                {
                     printf("Failed to create the file\n");
                     exit(1);
                 }
@@ -108,12 +108,19 @@ void dir_logic(char dir_path[])
                 exit(0);
             }
 
-            if(pid_process_dir>0)
+            if (pid_process_dir > 0)
             {
-                //char pid_str[10];
                 int status;
                 waitpid(pid_process_dir, &status, 0);
-                printf("The process child ended with PID: %d with exit code %d.\n\n", pid_process_dir, WEXITSTATUS(status));
+                printf("The process child ended with PID: %d with exit code %d.\n\n\n", pid_process_dir, WEXITSTATUS(status));
             }
         }
+    }
+    else
+    {
+        printf("\nInvalid option!\n");
+        printf("\n------MENU------\n\n");
+        printf("name (-n)\nsize (-d)\nfiles with .c extension (-c)\naccess rights (-a)\n");
+        dir_logic(dir_path);
+    }
 }
